@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koleksi Poster Otomatis</title>
+    <title>Koleksi Poster Super Cepat</title>
     <style>
         body {
             margin: 0;
@@ -26,41 +26,56 @@
             width: 100%;
             border-radius: 8px;
             transition: 0.3s;
-            cursor: pointer;
+            filter: blur(12px);
+            opacity: 0.5;
         }
-        .gallery img:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
+        .gallery img.loaded {
+            filter: blur(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
-    <h1>Koleksi Poster Otomatis</h1>
+    <h1>Koleksi Poster Super Cepat</h1>
     <div class="gallery" id="gallery"></div>
 
     <script>
-        // Username dan repository kamu
         const repoURL = "https://api.github.com/repos/Ukie4321/Mrzybposter/contents";
 
-        // Folder root repository
         fetch(repoURL)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(files => {
                 const gallery = document.getElementById("gallery");
 
-                files.forEach(file => {
-                    // Hanya ambil file gambar
-                    if (file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+                files
+                    .filter(f => f.name.match(/\.(png|jpg|jpeg|gif|webp)$/i))
+                    .forEach(f => {
+
                         const img = document.createElement("img");
 
-                        // Gunakan CDN yang cepat
-                        img.src = `https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/${file.name}`;
-                        img.alt = file.name;
+                        // Lazy-loading
+                        img.loading = "lazy";
+
+                        // CDN
+                        img.dataset.src = `https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/${f.name}`;
 
                         gallery.appendChild(img);
-                    }
+                    });
+
+                // IntersectionObserver untuk lazy-load
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.onload = () => img.classList.add("loaded");
+                            observer.unobserve(img);
+                        }
+                    });
                 });
+
+                document.querySelectorAll("img").forEach(img => observer.observe(img));
             });
     </script>
 
