@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koleksi Poster Otomatis</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .gallery img {
+            width: 100%;
+            border-radius: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Koleksi Poster Otomatis</h1>
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        // Username dan repository kamu
+        const repoURL = "https://api.github.com/repos/Ukie4321/Mrzybposter/contents";
+
+        // Folder root repository
+        fetch(repoURL)
+            .then(response => response.json())
+            .then(files => {
+                const gallery = document.getElementById("gallery");
+
+                files.forEach(file => {
+                    // Hanya ambil file gambar
+                    if (file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+                        const img = document.createElement("img");
+
+                        // Gunakan CDN yang cepat
+                        img.src = `https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/${file.name}`;
+                        img.alt = file.name;
+
+                        gallery.appendChild(img);
+                    }
+                });
+            });
+    </script>
+
+</body>
+</html>
